@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard | DreamHome</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(90deg, #007bff, #6610f2);
+      color: #fff;
+      padding: 14px 0;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      flex: 1;
+      margin-top: 28px;
+    }
+
+    .table thead {
+      background: #007bff;
+      color: #fff;
+    }
+
+    .btn-approve {
+      background: #198754;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-approve:hover {
+      background: #157347;
+    }
+
+    .btn-reject {
+      background: #dc3545;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-reject:hover {
+      background: #bb2d3b;
+    }
+
+    footer {
+      background: #212529;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      margin-right: 10px;
+      min-width: 150px;
+    }
+
+    .table img {
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .actions .btn {
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h2 class="m-0">DreamHome Admin Dashboard</h2>
+  <p class="mb-0">Manage property approvals and listings</p>
+</header>
+
+<div class="container">
+  <!-- Header & Controls -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h4 class="fw-bold mb-2">Manage Properties</h4>
+    <div>
+      <a href="/properties/add" class="btn btn-primary me-2 mb-2">+ Add Property</a>
+      <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" class="btn btn-outline-light bg-danger text-white mb-2">Logout</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 🔍 Filter/Search -->
+  <div class="filter-bar d-flex flex-wrap mb-4">
+    <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search by keyword (title/location)" />
+    <select id="filterType" class="form-select mb-2">
+      <option value="">All Types</option>
+      <option value="Rent">Rent</option>
+      <option value="Sale">Sale</option>
+    </select>
+    <input type="text" id="filterLocation" class="form-control mb-2" placeholder="Filter by Location" />
+    <input type="number" id="minPrice" class="form-control mb-2" placeholder="Min Price" />
+    <input type="number" id="maxPrice" class="form-control mb-2" placeholder="Max Price" />
+    <button class="btn btn-outline-primary mb-2" id="resetFilters">Reset</button>
+  </div>
+
+  <!-- 🏘️ Properties Table -->
+  <table id="propertyTable" class="table table-striped table-hover shadow-sm">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Price</th>
+        <th>Type</th>
+        <th>Location</th>
+        <th>Image</th>
+        <th>Status</th>
+        <th style="width:260px">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="property : ${properties}">
+        <td th:text="${property.id}">1</td>
+        <td th:text="${property.title}">Title</td>
+        <td th:text="${property.price}">100000</td>
+        <td th:text="${property.type}">Rent</td>
+        <td th:text="${property.location}">Chennai</td>
+        <td>
+          <img th:src="${property.imageUrl}" alt="Property" width="90" height="70" />
+        </td>
+        <td>
+          <span th:if="${property.approve}" class="text-success fw-bold">Approved</span>
+          <span th:unless="${property.approve}" class="text-warning fw-bold">Pending</span>
+        </td>
+
+        <!-- Actions Section -->
+        <td class="actions">
+          <div class="d-flex flex-wrap gap-1">
+            <!-- View -->
+            <a th:href="@{/properties/view/{id}(id=${property.id})}" 
+               class="btn btn-sm btn-info text-white">View</a>
+
+            <!-- Edit -->
+            <a th:href="@{/properties/edit/{id}(id=${property.id})}" 
+               class="btn btn-sm btn-warning text-dark">Edit</a>
+
+            <!-- Delete -->
+            <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                    th:data-bs-target="'#deleteModal' + ${property.id}">
+              Delete
+            </button>
+
+            <!-- Approve/Reject -->
+            <a th:if="${!property.approve}" th:href="@{/properties/approve/{id}(id=${property.id})}" 
+               class="btn btn-sm btn-success">Approve</a>
+            <a th:if="${property.approve}" th:href="@{/properties/reject/{id}(id=${property.id})}" 
+               class="btn btn-sm btn-secondary">Reject</a>
+          </div>
+
+          <!-- Delete Modal -->
+          <div class="modal fade" th:id="'deleteModal' + ${property.id}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                  <h5 class="modal-title">Confirm Delete</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete 
+                  <strong th:text="${property.title}">this property</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <a th:href="@{/properties/delete/{id}(id=${property.id})}" class="btn btn-danger">Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  <p class="mb-0">© 2025 DreamHome | Admin Management Panel</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const searchBox = document.getElementById("searchBox");
+  const filterType = document.getElementById("filterType");
+  const filterLocation = document.getElementById("filterLocation");
+  const minPrice = document.getElementById("minPrice");
+  const maxPrice = document.getElementById("maxPrice");
+  const resetBtn = document.getElementById("resetFilters");
+
+  function filterTable() {
+    const search = searchBox.value.toLowerCase();
+    const type = filterType.value.toLowerCase();
+    const location = filterLocation.value.toLowerCase();
+    const min = parseFloat(minPrice.value) || 0;
+    const max = parseFloat(maxPrice.value) || Infinity;
+
+    document.querySelectorAll("#propertyTable tbody tr").forEach(row => {
+      const title = row.children[1].textContent.toLowerCase();
+      const price = parseFloat(row.children[2].textContent) || 0;
+      const propType = row.children[3].textContent.toLowerCase();
+      const propLocation = row.children[4].textContent.toLowerCase();
+
+      const matchSearch = title.includes(search) || propLocation.includes(search);
+      const matchType = !type || propType === type;
+      const matchLocation = !location || propLocation.includes(location);
+      const matchPrice = price >= min && price <= max;
+
+      row.style.display = matchSearch && matchType && matchLocation && matchPrice ? "" : "none";
+    });
+  }
+
+  [searchBox, filterType, filterLocation, minPrice, maxPrice].forEach(el =>
+    el.addEventListener("input", filterTable)
+  );
+
+  resetBtn.addEventListener("click", () => {
+    searchBox.value = "";
+    filterType.value = "";
+    filterLocation.value = "";
+    minPrice.value = "";
+    maxPrice.value = "";
+    filterTable();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard | DreamHome</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(90deg, #28a745, #20c997);
+      color: #fff;
+      padding: 14px 0;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+      flex: 1;
+      margin-top: 30px;
+    }
+
+    .property-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .property-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .property-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      margin-right: 10px;
+      min-width: 150px;
+    }
+
+    footer {
+      background: #212529;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+      margin-top: auto;
+    }
+
+    .date-listed {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h2 class="m-0">DreamHome Dashboard</h2>
+  <p class="mb-0">Explore approved properties</p>
+</header>
+
+<div class="container">
+  <!-- Header & Logout -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+    <h4 class="fw-bold mb-2">Available Properties</h4>
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+      <button type="submit" class="btn btn-outline-light bg-danger text-white mb-2">Logout</button>
+    </form>
+  </div>
+
+  <!-- 🔍 Filters -->
+  <div class="filter-bar d-flex flex-wrap mb-4">
+    <input type="text" id="searchBox" class="form-control mb-2" placeholder="Search by title or location" />
+    <select id="filterType" class="form-select mb-2">
+      <option value="">All Types</option>
+      <option value="Rent">Rent</option>
+      <option value="Sale">Sale</option>
+    </select>
+    <input type="number" id="minPrice" class="form-control mb-2" placeholder="Min Price" />
+    <input type="number" id="maxPrice" class="form-control mb-2" placeholder="Max Price" />
+    <button class="btn btn-outline-primary mb-2" id="resetFilters">Reset</button>
+  </div>
+
+  <!-- 🏘️ Property Cards -->
+  <div id="propertyGrid" class="row g-4">
+    <div class="col-md-4" th:each="property : ${properties}">
+      <div class="card property-card" th:if="${property.approve}">
+        <img th:src="${property.imageUrl}" alt="Property Image" />
+
+        <div class="card-body">
+          <h5 th:text="${property.title}" class="card-title fw-bold">Luxury Apartment</h5>
+          <p class="card-text text-muted mb-1">
+            <i class="bi bi-geo-alt"></i>
+            <span th:text="${property.location}">Chennai</span>
+          </p>
+          <p class="card-text mb-1">
+            <strong>₹</strong><span th:text="${property.price}">15000</span>
+            <small th:text="${property.type}" class="text-secondary">Rent</small>
+          </p>
+
+          <!-- 🗓️ Fixed LocalDateTime Formatting -->
+          <p class="date-listed">
+            <i class="bi bi-calendar-event"></i>
+            Listed on:
+            <span th:text="${#temporals.format(property.dateListed, 'dd MMM yyyy')}"
+                  th:if="${property.dateListed != null}"></span>
+            <span th:unless="${property.dateListed != null}">Recently added</span>
+          </p>
+
+          <button class="btn btn-sm btn-info text-white"
+                  data-bs-toggle="modal"
+                  th:data-bs-target="'#viewModal' + ${property.id}">
+            View Details
+          </button>
+        </div>
+      </div>
+
+      <!-- View Details Modal -->
+      <div class="modal fade" th:id="'viewModal' + ${property.id}" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+              <h5 class="modal-title" th:text="${property.title}">Property Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body row">
+              <div class="col-md-6">
+                <img th:src="${property.imageUrl}" alt="Property Image" class="img-fluid rounded shadow-sm" />
+              </div>
+              <div class="col-md-6">
+                <p><strong>Location:</strong> <span th:text="${property.location}">Chennai</span></p>
+                <p><strong>Price:</strong> ₹<span th:text="${property.price}">15000</span></p>
+                <p><strong>Type:</strong> <span th:text="${property.type}">Rent</span></p>
+                <p><strong>Listed on:</strong>
+                  <span th:text="${#temporals.format(property.dateListed, 'dd MMM yyyy')}"
+                        th:if="${property.dateListed != null}"></span>
+                  <span th:unless="${property.dateListed != null}">Recently added</span>
+                </p>
+                <p><strong>Description:</strong></p>
+                <p th:text="${property.description}">
+                  Spacious 2BHK apartment with balcony and parking.
+                </p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p class="mb-0">© 2025 DreamHome | Customer Dashboard</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const searchBox = document.getElementById("searchBox");
+  const filterType = document.getElementById("filterType");
+  const minPrice = document.getElementById("minPrice");
+  const maxPrice = document.getElementById("maxPrice");
+  const resetBtn = document.getElementById("resetFilters");
+
+  function filterProperties() {
+    const search = searchBox.value.toLowerCase();
+    const type = filterType.value.toLowerCase();
+    const min = parseFloat(minPrice.value) || 0;
+    const max = parseFloat(maxPrice.value) || Infinity;
+
+    document.querySelectorAll("#propertyGrid .col-md-4").forEach(card => {
+      const title = card.querySelector(".card-title").textContent.toLowerCase();
+      const location = card.querySelector(".text-muted span").textContent.toLowerCase();
+      const price = parseFloat(card.querySelector(".card-text span:nth-child(2)").textContent) || 0;
+      const propType = card.querySelector(".text-secondary").textContent.toLowerCase();
+
+      const matchSearch = title.includes(search) || location.includes(search);
+      const matchType = !type || propType === type;
+      const matchPrice = price >= min && price <= max;
+
+      card.style.display = matchSearch && matchType && matchPrice ? "" : "none";
+    });
+  }
+
+  [searchBox, filterType, minPrice, maxPrice].forEach(el =>
+    el.addEventListener("input", filterProperties)
+  );
+
+  resetBtn.addEventListener("click", () => {
+    searchBox.value = "";
+    filterType.value = "";
+    minPrice.value = "";
+    maxPrice.value = "";
+    filterProperties();
+  });
+</script>
+</body>
+</html>

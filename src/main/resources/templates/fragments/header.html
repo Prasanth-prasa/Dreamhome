@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: 'RealNest'">RealNest</title>
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>RealNest</h1>
+    <nav>
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/admin}">Admin</a>
+        <a th:href="@{/logout}">Logout</a>
+    </nav>
+</header>
+<div class="container">

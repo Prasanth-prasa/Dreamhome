@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Property - DreamHome</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f9fafc;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <form th:action="@{/properties/add}" method="post" enctype="multipart/form-data">
+        <h2>Add Property</h2>
+        <label>Title:</label>
+        <input type="text" name="title" required>
+
+        <label>Description:</label>
+        <textarea name="description" required></textarea>
+
+        <label>Price:</label>
+        <input type="number" name="price" step="0.01" required>
+
+        <label>Type:</label>
+        <select name="type">
+            <option value="Sale">For Sale</option>
+            <option value="Rent">For Rent</option>
+        </select>
+
+        <label>Location:</label>
+        <input type="text" name="location" required>
+
+        <label>Image:</label>
+        <input type="file" name="imageFile" accept="image/*" onchange="previewImage(event)" required>
+        <img id="preview" src="#" alt="Preview" style="display:none;"/>
+
+        <button type="submit">Save Property</button>
+    </form>
+
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function(){
+                const preview = document.getElementById('preview');
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>403 | Access Denied – DreamHome</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg,#2a5298,#1e3c72);
+      color:#fff; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; height:100vh; margin:0;
+    }
+    .box {
+      background:rgba(255,255,255,.1);
+      padding:40px; border-radius:15px; text-align:center;
+      box-shadow:0 8px 20px rgba(0,0,0,.3);
+    }
+    h1{font-size:72px; color:#ff4d4d; margin:0;}
+    h2{margin-top:10px; font-weight:500;}
+    p{margin:15px 0;}
+    a{background:#ff4d4d; color:white; text-decoration:none;
+      padding:10px 25px; border-radius:8px; transition:.3s;}
+    a:hover{background:#ff1a1a;}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>403</h1>
+    <h2>Access Denied</h2>
+    <p>You don’t have permission to view this page.</p>
+    <a href="/dashboard">Back to Dashboard</a>
+  </div>
+</body>
+</html>

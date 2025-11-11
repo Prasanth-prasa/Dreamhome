@@ -1,0 +1,97 @@
+/* ========================
+   GLOBAL STYLES
+======================== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f7fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 700px;
+    margin: 60px auto;
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================
+   HEADER
+======================== */
+header {
+    background-color: #004aad;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+    border-radius: 0 0 12px 12px;
+}
+
+/* ========================
+   BUTTONS
+======================== */
+.btn-custom {
+    background-color: #004aad;
+    color: #fff;
+    border: none;
+    transition: all 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: #003580;
+    transform: translateY(-2px);
+}
+
+/* ========================
+   FORMS
+======================== */
+form label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+form input, form select {
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 74, 173, 0.25);
+}
+
+/* ========================
+   DASHBOARD
+======================== */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+}
+
+.card-title {
+    color: #004aad;
+    font-weight: 600;
+}
+
+.navbar {
+    background-color: #004aad;
+}
+
+.navbar a {
+    color: white !important;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    color: #cce0ff !important;
+}
+
