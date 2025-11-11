@@ -22,12 +22,12 @@ public class AuthController {
     public String loginPage(@RequestParam(value = "error", required = false) String error, Model model) {
         if (error != null)
             model.addAttribute("error", "Invalid email or password");
-        return "/login";
+        return "login";
     }
 
     @GetMapping("/register")
     public String registerPage() {
-        return "/register";
+        return "register";
     }
 
     @PostMapping("/register")
